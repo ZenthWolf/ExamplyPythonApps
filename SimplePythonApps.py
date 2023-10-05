@@ -9,6 +9,7 @@ Created on Thu Oct  5 09:55:12 2023
 #%% Cell Imports
 
 import requests
+from bs4 import BeautifulSoup
 
 #%% Scrape WisdomPetMedicine (fictional business)
 
@@ -20,3 +21,17 @@ response.headers       # Check headers
 response.content       # HTML in byte data
 response.text          # HTML as UTF-8 string (More readable, might less accurate)
 
+#%% Parsing
+
+soup = BeautifulSoup(response.text, features="lxml")
+print('\nHTML')
+print(soup.prettify() )
+business_name = soup.find('title')
+print('\nBusiness Name:')
+print(business_name)
+services_list = soup.find_all('article')
+print('\nList of Services')
+print(services_list)
+business_phone = soup.find('span', class_='phone').text
+print('\nPhone:')
+print(business_phone)
