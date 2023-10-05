@@ -6,3 +6,98 @@ Created on Thu Oct  5 14:26:43 2023
 @author: zenth
 """
 
+#%% Install Alpha Vantage API
+%pip install alpha_vantage
+
+#%% Imports
+from alpha_vantage.timeseries import TimeSeries
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import io
+
+#%% Read API Key
+with open('api_key.txt') as f:
+    API_Key = f.read()
+
+API_Key = API_Key.strip()
+API_Key
+
+#%% Using Python Package
+
+#%% TimeSeries
+
+ts1 = TimeSeries(key=API_Key)
+
+#%% Get Unity Stock monthly
+ts1.get_monthly("U")
+
+#%% Get Unity stock weekly
+
+ts1.get_weekly("U")
+
+#%% Intraday stock
+
+ts1.get_intraday("U")
+
+#%% Using Requests
+
+#%% Get monthly time series
+
+url = f'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=u&apikey={API_Key}'
+
+r = requests.get(url)
+data = r.json()
+
+print(data)
+
+#%% Get Weekly time series
+
+url = f'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=u&apikey={API_Key}'
+
+r = requests.get(url)
+data = BeautifulSoup(r.content)
+
+print(data)
+
+#%% Get Weekly time series
+
+url = f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=u&interval=60min&apikey={API_Key}'
+
+r = requests.get(url)
+data = BeautifulSoup(r.content)
+
+print(data)
+
+#%% Utilizing pandas with requests
+
+url = f'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=u&apikey={API_Key}&datatype=csv'
+
+r = requests.get(url).content
+data = pd.read_csv(io.StringIO(r.decode('utf-8')))
+
+print(data)
+
+#%% Utilizing pandas with python package
+
+unity1, meta_data = ts1.get_intraday("U")
+
+print(meta_data)
+
+print(unity1)
+
+#%% Transform to dataframe
+
+df_unity1 = pd.DataFrame(unity1).transpose().reset_index()
+
+df_unity1.head()
+
+#%% Dataframe format directly
+
+ts2 = TimeSeries(key=API_Key, output_format='pandas')
+
+df_Unity2, metadata = ts2.get_intraday("U", outputsize="full")
+
+print(df_Unity2.reset_index())
+
+print(meta_data)
