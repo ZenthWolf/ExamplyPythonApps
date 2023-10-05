@@ -11,6 +11,10 @@ Created on Thu Oct  5 09:55:12 2023
 import requests
 from bs4 import BeautifulSoup
 
+import os
+current_directory = os.path.dirname(os.path.realpath(__file__))
+os.chdir(current_directory)
+
 #%% Scrape WisdomPetMedicine (fictional business)
 
 response = requests.get('https://wisdompetmed.com')
@@ -35,3 +39,25 @@ print(services_list)
 business_phone = soup.find('span', class_='phone').text
 print('\nPhone:')
 print(business_phone)
+
+featured_testimonial = soup.find_all('div', class_="quote")
+for testimonial in featured_testimonial:
+  print(testimonial.text)
+  
+staff = soup.find_all('div', class_="info col-xs-8 col-xs-offset-2 col-sm-7 col-sm-offset-0 col-md-6 col-lg-8")
+for s in staff:
+    print(s.text)
+
+links = soup.find_all("a")
+
+for link in links:
+  print(link.text, link.get('href'))
+#%% Recording
+
+with open("Wisdom_Vet.txt", "w") as f:
+    f.write(soup.prettify())
+
+with open("Wisdom_Vet_Services.txt", "w") as f:
+    for service in services_list:
+        f.write(service.text)
+
