@@ -17,14 +17,18 @@ from nltk.corpus import stopwords
 #from gensim.corpora import Dictionary
 #from gensim.models import ldamodel
 #from gensim.models.coherencemodel import CoherenceModel
-#from wordcloud import WordCloud
+from wordcloud import WordCloud
 
 import pandas as pd
 #from PIL import Image
 #import numpy as np
 #import random
 import re
-#import matplotlib.pyplot as plt
+
+import matplotlib.pyplot as plt
+#External Window
+#%matplotlib qt
+#Inline
 #%matplotlib inline
 
 import os
@@ -101,7 +105,12 @@ sentences.drop(sentences.index[:59], inplace=True)
 sentences = sentences.reset_index(drop=True)
 sentences.head(10)
 
+#%% Create word cloud with our text data
 
+stopwords_wc = set(stopwords.words("english"))
 
-
-
+wordcloud = WordCloud(max_words=100, stopwords=stopwords_wc, random_state=1).generate(word_cloud_text)
+plt.figure(figsize=(12,16))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
