@@ -1,5 +1,6 @@
 # Sensitive Info
 api_key.txt
+great_expectations.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
