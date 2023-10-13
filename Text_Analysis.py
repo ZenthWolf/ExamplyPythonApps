@@ -20,9 +20,9 @@ from nltk.corpus import stopwords
 from wordcloud import WordCloud
 
 import pandas as pd
-#from PIL import Image
-#import numpy as np
-#import random
+from PIL import Image
+import numpy as np
+import random
 import re
 
 import matplotlib.pyplot as plt
@@ -114,3 +114,30 @@ plt.figure(figsize=(12,16))
 plt.imshow(wordcloud)
 plt.axis("off")
 plt.show()
+
+#%% Improving word cloud
+
+#Define gray_color_func function and mask variable for advanced word cloud
+mask = np.array(Image.open("man_in_top_hat.jpeg"))
+
+def grey_color_func(word, font_size, position, orientation, random_state=None, **kwargs):
+    return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
+
+#Create advanced Word Cloud with our text data
+wordcloud = WordCloud(background_color="purple", mask=mask, color_func=grey_color_func, max_words=100, stopwords=stopwords_wc, random_state=1).generate(word_cloud_text)
+plt.figure(figsize=(12, 9))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+
+#%%
+
+
+
+
+
+
+
+
+
+
