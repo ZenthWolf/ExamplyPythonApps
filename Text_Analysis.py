@@ -130,12 +130,27 @@ plt.imshow(wordcloud)
 plt.axis("off")
 plt.show()
 
-#%%
+#%% Word Frequency Analysis (AKA, something that's not a complete distraction)
 
+#Word Frequency Distribution
+fdist = nltk.FreqDist(tokens)
+fdist
 
+#%% 50 Most Common words
 
+fdist.most_common(50)
 
+#%% Visualization of top 50 most common words in text
 
+plt.figure(figsize=(12,6))
+fdist.plot(50)
+plt.show()
+
+#%% Cumulative word count
+
+plt.figure(figsize=(12,6))
+fdist.plot(50,cumulative=True)
+plt.show()
 
 
 
