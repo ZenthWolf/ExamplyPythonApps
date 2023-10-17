@@ -11,7 +11,7 @@ Created on Thu Oct 12 20:42:29 2023
 import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
-#from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 #from nltk.stem import WordNetLemmatizer
 
 #from gensim.corpora import Dictionary
@@ -151,6 +151,62 @@ plt.show()
 plt.figure(figsize=(12,6))
 fdist.plot(50,cumulative=True)
 plt.show()
+
+#%% Vader Sentiment Analysis
+
+#Initialize Vader sentiment analyzer
+analyzer = SentimentIntensityAnalyzer()
+
+#Perform Vader Sentiment Analysis
+sentences['compound'] = [analyzer.polarity_scores(x)['compound'] for x in sentences['sentence']]
+sentences['neg'] = [analyzer.polarity_scores(x)['neg'] for x in sentences['sentence']]
+sentences['neu'] = [analyzer.polarity_scores(x)['neu'] for x in sentences['sentence']]
+sentences['pos'] = [analyzer.polarity_scores(x)['pos'] for x in sentences['sentence']]
+sentences.head(10)
+
+#%% Vader Sentiment Analysis Visualization
+
+#Get number of positive, neutral, and negative sentences
+positive_sentence = sentences.loc[sentences['compound'] > 0]
+neutral_sentence = sentences.loc[sentences['compound'] == 0]
+negative_sentence = sentences.loc[sentences['compound'] < 0]
+
+print(sentences.shape)
+print(len(positive_sentence))
+print(len(neutral_sentence))
+print(len(negative_sentence))
+
+#Plot Histogram
+plt.figure(figsize=(14,6))
+plt.hist(sentences['compound'], bins=50);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
