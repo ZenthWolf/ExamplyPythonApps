@@ -12,11 +12,11 @@ import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-#from nltk.stem import WordNetLemmatizer
+from nltk.stem import WordNetLemmatizer
 
-#from gensim.corpora import Dictionary
-#from gensim.models import ldamodel
-#from gensim.models.coherencemodel import CoherenceModel
+from gensim.corpora import Dictionary
+from gensim.models import ldamodel
+from gensim.models.coherencemodel import CoherenceModel
 from wordcloud import WordCloud
 
 import pandas as pd
@@ -180,23 +180,64 @@ print(len(negative_sentence))
 plt.figure(figsize=(14,6))
 plt.hist(sentences['compound'], bins=50);
 
+#%% Topic Modelling
 
+#Convert sentence data to list
+data = sentences['sentence'].values.tolist()
+type(data)
 
+#Text cleaning and tokenization using function
+def text_processing(texts):
+    # Remove numbers and alphanumerical words we don't need
+    texts = [re.sub("[^a-zA-Z]+", " ", str(text)) for text in texts]
+    # Tokenize & lowercase each word
+    texts = [[word for word in text.lower().split()] for text in texts]
+    # Stem each word
+    lmtzr = WordNetLemmatizer()
+    texts = [[lmtzr.lemmatize(word) for word in text] for text in texts]
+    # Remove stopwords
+    stoplist = stopwords.words('english')
+    texts = [[word for word in text if word not in stoplist] for text in texts]
+    # Remove short words less than 3 letters in length
+    texts = [[word for word in tokens if len(word) >= 3] for tokens in texts]
+    return texts
 
+# Apply function to process data and convert to dictionary
+data = text_processing(data)
+dictionary = Dictionary(data)
+len(dictionary)
 
+#Create corpus for LDA analysis
+corpus = [dictionary.doc2bow(text) for text in data]
+len(corpus)
 
+#%% Latent Dirichlet Allocation (long runtime)
 
+#Find optimal k value for the number of topics for our LDA analysis
+np.random.seed(1)
+k_range = range(6,20,2)
+scores = []
 
+for k in k_range:
+    LdaModel = ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=k, passes=20)
+    cn = CoherenceModel(model = LdaModel, corpus=corpus, dictionary=dictionary,coherence="u_mass")
+    print(cn.get_coherence())
+    scores.append(cn.get_coherence())
 
+plt.figure()
+plt.plot(k_range,scores)
 
+# "Optimal" is verbage chosen by course. Coherence seems to be monotonically
+# decreasing, leaving choosing k to be a judgement call.
 
+#%% Build LDA topic model
 
+model = ldamodel.LdaModel(corpus, id2word=dictionary, num_topics=4,passes=20)
 
+model.show_topics()
 
-
-
-
-
+# Topics are like correlated word clusters. Not super clear how to leverage
+# this to make an analytical judgement without already knowing the text, tbh
 
 
 
